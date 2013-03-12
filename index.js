@@ -235,7 +235,7 @@ if (modern) { // for browsers supporting history.pushState
  * Additional initializer functionality.
  */
 
-Container.prototype.init = function(options){
+Context.prototype.init = function(options){
   this.title = document.title;
   this.state = options.state || {};
 }
