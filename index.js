@@ -232,6 +232,15 @@ if (modern) { // for browsers supporting history.pushState
 }
 
 /**
+ * Additional initializer functionality.
+ */
+
+Container.prototype.init = function(options){
+  this.title = document.title;
+  this.state = options.state || {};
+}
+
+/**
  * Refresh the page if there is an unhandled error.
  * 
  * @see https://github.com/visionmedia/page.js/blob/master/index.js
