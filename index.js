@@ -174,14 +174,6 @@ if (modern) { // for browsers supporting history.pushState
 }
 
 /**
- * Save the context state.
- *
- * @api public
- */
-
-Context.prototype.save = Context.prototype.replaceState;
-
-/**
  * Refresh the page if there is an unhandled error.
  * 
  * @see https://github.com/visionmedia/page.js/blob/master/index.js
