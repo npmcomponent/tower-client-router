@@ -9,6 +9,64 @@ var container = require('tower-container')
   , Context = require('tower-context');
 
 /**
+ * Expose `route`.
+ */
+
+module.exports = route;
+
+/**
+ * Examples:
+ *
+ *    route('/posts', 'posts.index')
+ *    route('/posts', 'posts.index', 'GET')
+ *    route('/posts', 'posts.index', { method: 'GET' })
+ *    route('/posts', { name: 'posts.index', method: 'GET' })
+ *    route({ path: '/posts', name: 'posts.index', method: 'GET' })
+ *    route('posts.index')
+ */
+
+function route(name, path, options) {  
+  if (arguments.length == 1) {
+    return container.get('route:' + name);
+  }
+
+  options || (options = {});
+
+  if ('/' == name.charAt(0)) {
+    options.name = path;
+    options.path = name;
+  } else {
+    options.name = name;
+    options.path = path;
+  }
+
+  var newRoute = new Route(options);
+
+  container.set('route:' + newRoute.id, newRoute);
+
+  use(newRoute);
+
+  return newRoute;
+}
+
+var exports = route;
+
+/**
+ * Return route middleware with
+ * the given callback `fn()`.
+ *
+ * @param {Function} fn
+ * @return {Function}
+ * @api public
+ */
+
+function use(route){
+  exports.callbacks.push(function(ctx, next){
+    route.handle(ctx, next);
+  });
+};
+
+/**
  * Perform initial dispatch.
  */
 
