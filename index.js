@@ -228,6 +228,11 @@ Context.prototype.save = function(){
 
 }
 
+Context.prototype.redirect = function(path){
+  exports.replace(path);
+  return this;
+}
+
 /**
  * Refresh the page if there is an unhandled error.
  * 
