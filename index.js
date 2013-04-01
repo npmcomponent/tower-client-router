@@ -3,68 +3,8 @@
  * Module dependencies
  */
 
-var container = require('tower-container')
-  , Container = container.Container
-  , Route = require('tower-route')
+var route = require('tower-route')
   , Context = require('tower-context');
-
-/**
- * Expose `route`.
- */
-
-module.exports = route;
-
-/**
- * Examples:
- *
- *    route('/posts', 'posts.index')
- *    route('/posts', 'posts.index', 'GET')
- *    route('/posts', 'posts.index', { method: 'GET' })
- *    route('/posts', { name: 'posts.index', method: 'GET' })
- *    route({ path: '/posts', name: 'posts.index', method: 'GET' })
- *    route('posts.index')
- */
-
-function route(name, path, options) {  
-  if (arguments.length == 1) {
-    return container.get('route:' + name);
-  }
-
-  options || (options = {});
-
-  if ('/' == name.charAt(0)) {
-    options.name = path;
-    options.path = name;
-  } else {
-    options.name = name;
-    options.path = path;
-  }
-
-  var newRoute = new Route(options);
-
-  container.set('route:' + newRoute.id, newRoute);
-
-  use(newRoute);
-
-  return newRoute;
-}
-
-var exports = route;
-
-/**
- * Return route middleware with
- * the given callback `fn()`.
- *
- * @param {Function} fn
- * @return {Function}
- * @api public
- */
-
-function use(route){
-  exports.callbacks.push(function(ctx, next){
-    route.handle(ctx, next);
-  });
-};
 
 /**
  * Perform initial dispatch.
@@ -91,10 +31,32 @@ var modern = !!(history && history.pushState);
 var onchange;
 
 /**
+ * Event name.
+ */
+
+var event = modern ? 'onpopstate' : 'hashchange';
+
+/**
  * Callback functions.
  */
 
 exports.callbacks = [];
+
+/**
+ * Expose `route`.
+ */
+
+exports.route = route;
+
+/**
+ * When a route is created, add it to the router.
+ */
+
+route.on('define', function(_route){
+  exports.use(function(context, next){
+    _route.handle(context, next);
+  });
+});
 
 /**
  * Bind `onpopstate` or `hashchange` event handler.
@@ -106,7 +68,7 @@ exports.start = function(d){
   if (running) return;
   running = true;
   dispatch = false !== d;
-  window.addEventListener(modern ? 'onpopstate' : 'hashchange', onchange);
+  window.addEventListener(event, onchange);
   exports.replace(location.pathname + location.search);
 };
 
@@ -118,7 +80,7 @@ exports.start = function(d){
 
 exports.stop = function(){
   running = false;
-  removeEventListener(modern ? 'onpopstate' : 'hashchange', onchange);
+  window.removeEventListener(event, onchange);
 };
 
 /**
@@ -180,6 +142,7 @@ exports.forward = function(i){
 /**
  * Add middleware
  *
+ * @param {Function} fn
  * @api public
  */
 
@@ -233,11 +196,31 @@ if (modern) { // for browsers supporting history.pushState
 
 /**
  * Additional initializer functionality.
+ *
+ * @api private
  */
 
 Context.prototype.init = function(options){
   this.title = document.title;
   this.state = options.state || {};
+}
+
+/**
+ * Render a template.
+ *
+ * @param {String} name
+ * @param {Object} options
+ * @api public
+ */
+
+Context.prototype.render = function(name, options){
+  if ('object' == typeof name) options = name;
+  options || (options = {});
+
+  // https://github.com/component/reactive/blob/master/examples/hide.html
+  // https://github.com/component/reactive/blob/master/examples/form.html
+
+  view(name).appendTo('body');
 }
 
 /**

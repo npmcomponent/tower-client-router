@@ -5,9 +5,13 @@
   "version": "0.0.1",
   "keywords": [],
   "dependencies": {
-    "tower-route": "*",
-    "tower-context": "*",
-    "tower-container": "*"
+    "tower/route": "*",
+    "tower/context": "*",
+    "tower/container": "*",
+    "tower/view": "*"
+  },
+  "development": {
+
   },
   "scripts": ["index.js"],
   "styles": [],
