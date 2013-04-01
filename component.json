@@ -7,13 +7,15 @@
   "dependencies": {
     "tower/route": "*",
     "tower/context": "*",
-    "tower/container": "*",
-    "tower/view": "*"
+    "tower/view": "*",
+    "component/path-to-regexp": "*",
+    "component/emitter": "*"
   },
   "development": {
-
+    "visionmedia/mocha": "*"
   },
-  "scripts": ["index.js"],
-  "styles": [],
+  "scripts": [
+    "index.js"
+  ],
   "license": "MIT"
 }

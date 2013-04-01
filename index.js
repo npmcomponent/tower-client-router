@@ -223,6 +223,10 @@ Context.prototype.render = function(name, options){
   view(name).appendTo('body');
 }
 
+Context.prototype.save = function(){
+  
+}
+
 /**
  * Refresh the page if there is an unhandled error.
  * 

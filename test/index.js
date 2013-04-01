@@ -1,8 +1,14 @@
-var route = require('..')
-  , assert = require('chai').assert;
+var router = require('tower-router')
+  , route = router.route;
+  //, assert = require('assert');
 
-route('serverTest', function() {
-  it('should build routes', function() {
-    assert.equal(1 + 1, 2);
+describe('router', function(){
+  it('should build routes', function(){
+    route('/posts', 'index')
+      .use(function(context){
+        console.log('here!');
+      })
+
+    router.start();
   });
 });
