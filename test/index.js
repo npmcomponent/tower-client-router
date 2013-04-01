@@ -4,14 +4,15 @@ var router = require('tower-router')
 
 describe('router', function(){
   it('should build routes', function(){
+    var calls = 0;
+
     route('/', 'index')
       .use(function(context){
-        console.log('here!');
-      })
-      .handle = function(context) {
-        console.log(context)
-      }
+        ++calls;
+      });
 
     router.start();
+    console.log(calls);
+    //assert(1 == calls);
   });
 });
