@@ -69,6 +69,7 @@ exports.start = function(d){
   running = true;
   dispatch = false !== d;
   window.addEventListener(event, onchange);
+  // location protocol == file:
   exports.replace(location.pathname + location.search);
 };
 
@@ -157,13 +158,13 @@ exports.use = function(fn){
  * @api private
  */
 
-exports.dispatch = function(url){
+exports.dispatch = function(context){
   var i = 0;
 
   function next() {
     var fn = exports.callbacks[i++];
-    if (!fn) return unhandled(url);
-    fn(url, next);
+    if (!fn) return unhandled(context);
+    fn(context, next);
   }
 
   next();
@@ -224,7 +225,7 @@ Context.prototype.render = function(name, options){
 }
 
 Context.prototype.save = function(){
-  
+
 }
 
 /**

@@ -4,10 +4,13 @@ var router = require('tower-router')
 
 describe('router', function(){
   it('should build routes', function(){
-    route('/posts', 'index')
+    route('/', 'index')
       .use(function(context){
         console.log('here!');
       })
+      .handle = function(context) {
+        console.log(context)
+      }
 
     router.start();
   });
