@@ -165,7 +165,7 @@ Context.prototype.render = function(name, options){
 }
 
 Context.prototype.save = function(){
-
+  this.replaceState();
 }
 
 Context.prototype.redirect = function(path){

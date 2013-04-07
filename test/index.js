@@ -4,6 +4,10 @@ var router = require('tower-router')
 
 describe('router', function(){
   beforeEach(router.clear);
+  
+  afterEach(function(){
+    router.replace('/');
+  });
 
   it('should build routes', function(){
     var calls = [];
@@ -11,7 +15,6 @@ describe('router', function(){
     route('/')
       .use(function(context){
         calls.push('use');
-        // context.redirect('/posts');
       })
       .on('request', function(context){
         calls.push('request');
@@ -20,36 +23,9 @@ describe('router', function(){
     router.start();
     router.stop();
 
-    // assert('use' === calls[0]);
-    // assert('request' === calls[1]);
-
-    console.log(calls);
-    //router.show('/posts');
-    //router.show('/comments');
-    //assert(1 == calls);
+    assert('use' === calls[0]);
+    assert('request' === calls[1]);
   });
-
-  /*it('should redirect', function(){
-    var calls = [];
-
-    route('/users')
-      .on('request', function(context){
-        calls.push('users.request');
-
-        context.redirect('/posts');
-      });
-
-    route('/posts')
-      .on('request', function(context){
-        calls.push('posts.request');
-      });
-
-    router.start();
-    router.dispatch('/users');
-    router.stop();
-
-    console.log(calls);
-  });*/
 
   it('should transition', function(done){
     var calls = [];
@@ -67,7 +43,33 @@ describe('router', function(){
       .on('request', function(context){
         calls.push('posts.request');
 
-        console.log(calls);
+        assert('users.request' === calls[0]);
+        assert('posts.request' === calls[1]);
+
+        done();
+      });
+
+    router.start();
+    router.dispatch('/users');
+    router.stop();
+  });
+
+  it('should redirect', function(done){
+    var calls = [];
+
+    route('/users')
+      .on('request', function(context){
+        calls.push('users.request');
+
+        context.redirect('/posts');
+      });
+
+    route('/posts')
+      .on('request', function(context){
+        calls.push('posts.request');
+
+        assert('users.request' === calls[0]);
+        assert('posts.request' === calls[1]);
 
         done();
       });
