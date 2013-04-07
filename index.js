@@ -4,7 +4,6 @@
  */
 
 var route = require('tower-route')
-  , Context = require('tower-context')
   , series = require('part-async-series');
 
 /**
@@ -18,6 +17,12 @@ var exports = module.exports = router;
  */
 
 exports.route = route;
+
+/**
+ * Expose `Context`.
+ */
+
+exports.Context = Context;
 
 /**
  * Callback functions (middleware).
@@ -170,12 +175,23 @@ exports.replace = function(path, state, dispatch){
 };
 
 /**
- * Additional initializer functionality.
- *
- * @api private
+ * Instantiate a new `Context`.
  */
 
-Context.prototype.init = function(options){
+function Context(options) {
+  options || (options = {});
+
+  for (var key in options) this[key] = options[key];
+
+  var path = options.path;
+  var i = path.indexOf('?');
+  this.canonicalPath = path;
+  this.path = path || '/';
+  this.state = {};
+  this.state.path = path;
+  this.querystring = ~i ? path.slice(i + 1) : '';
+  this.pathname = ~i ? path.slice(0, i) : path;
+  this.params = [];
   this.title = document.title;
   this.state = options.state || {};
 }

@@ -6,7 +6,6 @@
   "keywords": [],
   "dependencies": {
     "tower/route": "*",
-    "tower/context": "*",
     "part/async-series": "*",
     "component/emitter": "*"
   },
