@@ -5,7 +5,20 @@
 
 var route = require('tower-route')
   , Context = require('tower-context')
-  , Emitter = 'undefined' == typeof window ? require('emitter-component') : require('emitter');
+  , routing = require('tower-routing')
+  , series = require('part-async-series');
+
+/**
+ * Expose `router`.
+ */
+
+var exports = module.exports = router;
+
+/**
+ * Expose `route`.
+ */
+
+exports.route = route;
 
 /**
  * Perform initial dispatch.
@@ -38,68 +51,18 @@ var onchange;
 var event = modern ? 'onpopstate' : 'hashchange';
 
 /**
- * Callback functions.
+ * Router as middleware.
  */
 
-exports.callbacks = [];
-
-/**
- * Expose `route`.
- */
-
-exports.route = route;
-
-/**
- * When a route is created, add it to the router.
- */
-
-route.on('define', function(_route){
-  exports.use(function(context, next){
-    return _route.handle(context, next);
-  });
-});
-
-/**
- * Add middleware
- *
- * @param {Function} fn
- * @api public
- */
-
-exports.use = function(fn){
-  exports.callbacks.push(fn);
+function router(context, next) {
+  exports.dispatch(context, next);
 }
 
 /**
- * Dispatch the given `context`.
- *
- * @param {Object} context
- * @api private
+ * Expose `dispatch`.
  */
 
-exports.dispatch = function(context){
-  if ('string' === typeof context)
-    context = new Context({ path: context });
-
-  var i = 0;
-
-  function next() {
-    var fn = exports.callbacks[i++];
-    if (!fn) return unhandled(context);
-    // after it matches the first one, don't do anything.
-    if (true === fn(context, next)) {
-      return;
-    }
-  }
-
-  next();
-}
-
-exports.clear = function(){
-  exports.callbacks.length = 0;
-  route.routes.length = 0;
-  return router;
-}
+exports.dispatch = routing.dispatch;
 
 /**
  * Bind `onpopstate` or `hashchange` event handler.
@@ -112,7 +75,7 @@ exports.start = function(d){
   running = true;
   dispatch = false !== d;
   window.addEventListener(event, onchange);
-  // location protocol == file:
+  // be wary of location protocol == file:
   exports.replace(location.pathname + location.search);
 };
 
@@ -148,8 +111,6 @@ exports.show = function(path, state, dispatch){
   if (!context.unhandled) context.pushState();
   return context;
 };
-
-exports.handle = exports.transition = exports.show;
 
 /**
  * Replace `path` with optional `state` object.
@@ -255,13 +216,18 @@ Context.prototype.redirect = function(path){
 }
 
 /**
- * Refresh the page if there is an unhandled error.
- * 
- * @see https://github.com/visionmedia/page.js/blob/master/index.js
+ * Transition to a new route.
+ *
+ * This first exits out of the current route,
+ * then enters into the new one.
+ *
+ * @param {String} name   Name of the route.
+ * @api public
  */
 
-function unhandled(context) {
-  if (window.location.pathname + window.location.search == context.canonicalPath) return;
-  exports.stop();
-  window.location = context.canonicalPath;
+Context.prototype.transition = function(name){
+  // TODO: use the `queue` module, or somehow better configure.
+  series(this, this.route.actions['exit'], this, function(){
+    exports.dispatch(route(name));
+  });
 }

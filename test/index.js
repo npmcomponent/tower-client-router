@@ -29,7 +29,7 @@ describe('router', function(){
     //assert(1 == calls);
   });
 
-  it('should redirect', function(){
+  /*it('should redirect', function(){
     var calls = [];
 
     route('/users')
@@ -49,5 +49,31 @@ describe('router', function(){
     router.stop();
 
     console.log(calls);
+  });*/
+
+  it('should transition', function(done){
+    var calls = [];
+
+    route('/users', 'users.index')
+      .on('request', function(context){
+        calls.push('users.request')
+
+        setTimeout(function(){
+          context.transition('posts.index');
+        }, 1);
+      });
+
+    route('/posts', 'posts.index')
+      .on('request', function(context){
+        calls.push('posts.request');
+
+        console.log(calls);
+
+        done();
+      });
+
+    router.start();
+    router.dispatch('/users');
+    router.stop();
   });
 });
