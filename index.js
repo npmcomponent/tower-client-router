@@ -5,7 +5,6 @@
 
 var route = require('tower-route')
   , Context = require('tower-context')
-  , routing = require('tower-routing')
   , series = require('part-async-series');
 
 /**
@@ -19,6 +18,12 @@ var exports = module.exports = router;
  */
 
 exports.route = route;
+
+/**
+ * Callback functions (middleware).
+ */
+
+var callbacks = exports.callbacks = [];
 
 /**
  * Perform initial dispatch.
@@ -59,16 +64,42 @@ function router(context, next) {
 }
 
 /**
- * Expose `dispatch`.
+ * Dispatch the given `context`.
+ *
+ * @param {Object} context
+ * @api private
  */
 
-exports.dispatch = routing.dispatch;
+exports.dispatch = function(context, fn){
+  if ('string' === typeof context)
+    context = new Context({ path: context });
+
+  series(callbacks, context, function(err){
+    if (err && fn) fn(err);
+  });
+
+  return exports;
+}
 
 /**
- * Expose `clear`.
+ * Clear routes and callbacks.
  */
 
-exports.clear = routing.clear;
+exports.clear = function(){
+  callbacks.length = 0;
+  route.routes.length = 0;
+  return exports;
+}
+
+/**
+ * When a route is created, add it to the router.
+ */
+
+route.on('define', function(_route){
+  callbacks.push(function(context, next){
+    return _route.handle(context, next);
+  });
+});
 
 /**
  * Bind `onpopstate` or `hashchange` event handler.

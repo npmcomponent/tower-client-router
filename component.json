@@ -7,7 +7,6 @@
   "dependencies": {
     "tower/route": "*",
     "tower/context": "*",
-    "tower/routing": "*",
     "part/async-series": "*",
     "component/emitter": "*"
   },
