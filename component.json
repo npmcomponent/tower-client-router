@@ -8,11 +8,12 @@
     "tower/route": "*",
     "tower/context": "*",
     "tower/routing": "*",
-    "tower/view": "*",
+    "part/async-series": "*",
     "component/emitter": "*"
   },
   "development": {
-    "visionmedia/mocha": "*"
+    "visionmedia/mocha": "*",
+    "component/assert": "*"
   },
   "scripts": [
     "index.js"

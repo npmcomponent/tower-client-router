@@ -65,6 +65,12 @@ function router(context, next) {
 exports.dispatch = routing.dispatch;
 
 /**
+ * Expose `clear`.
+ */
+
+exports.clear = routing.clear;
+
+/**
  * Bind `onpopstate` or `hashchange` event handler.
  *
  * @api public
@@ -179,7 +185,7 @@ Context.prototype.redirect = function(path){
 
 Context.prototype.transition = function(name){
   // TODO: use the `queue` module, or somehow better configure.
-  series(this, this.route.actions['exit'], this, function(){
+  series(this.route.actions['exit'], this, function(){
     exports.dispatch(route(name));
   });
 }
