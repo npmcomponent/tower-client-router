@@ -4,7 +4,8 @@
  */
 
 var route = require('tower-route')
-  , Context = require('tower-context');
+  , Context = require('tower-context')
+  , Emitter = 'undefined' == typeof window ? require('emitter-component') : require('emitter');
 
 /**
  * Perform initial dispatch.
@@ -54,9 +55,51 @@ exports.route = route;
 
 route.on('define', function(_route){
   exports.use(function(context, next){
-    _route.handle(context, next);
+    return _route.handle(context, next);
   });
 });
+
+/**
+ * Add middleware
+ *
+ * @param {Function} fn
+ * @api public
+ */
+
+exports.use = function(fn){
+  exports.callbacks.push(fn);
+}
+
+/**
+ * Dispatch the given `context`.
+ *
+ * @param {Object} context
+ * @api private
+ */
+
+exports.dispatch = function(context){
+  if ('string' === typeof context)
+    context = new Context({ path: context });
+
+  var i = 0;
+
+  function next() {
+    var fn = exports.callbacks[i++];
+    if (!fn) return unhandled(context);
+    // after it matches the first one, don't do anything.
+    if (true === fn(context, next)) {
+      return;
+    }
+  }
+
+  next();
+}
+
+exports.clear = function(){
+  exports.callbacks.length = 0;
+  route.routes.length = 0;
+  return router;
+}
 
 /**
  * Bind `onpopstate` or `hashchange` event handler.
@@ -96,10 +139,14 @@ exports.stop = function(){
  */
 
 exports.show = function(path, state, dispatch){
-  var ctx = new Context(path, state);
-  if (false !== dispatch) exports.dispatch(ctx);
-  if (!ctx.unhandled) ctx.pushState();
-  return ctx;
+  var context = new Context({
+      path: path
+    , state: state
+  });
+
+  if (false !== dispatch) exports.dispatch(context);
+  if (!context.unhandled) context.pushState();
+  return context;
 };
 
 exports.handle = exports.transition = exports.show;
@@ -113,11 +160,15 @@ exports.handle = exports.transition = exports.show;
  */
 
 exports.replace = function(path, state, dispatch){
-  var ctx = new Context(path, state);
+  var context = new Context({
+      path: path
+    , state: state
+  });
+
   if (null == dispatch) dispatch = true;
-  if (dispatch) exports.dispatch(ctx);
-  ctx.save();
-  return ctx;
+  if (dispatch) exports.dispatch(context);
+  context.save();
+  return context;
 };
 
 /**
@@ -138,36 +189,6 @@ exports.back = function(i){
 
 exports.forward = function(i){
   i ? window.history.go(i) : history.forward();
-}
-
-/**
- * Add middleware
- *
- * @param {Function} fn
- * @api public
- */
-
-exports.use = function(fn){
-  exports.callbacks.push(fn);
-}
-
-/**
- * Dispatch the given `ctx`.
- *
- * @param {Object} ctx
- * @api private
- */
-
-exports.dispatch = function(context){
-  var i = 0;
-
-  function next() {
-    var fn = exports.callbacks[i++];
-    if (!fn) return unhandled(context);
-    fn(context, next);
-  }
-
-  next();
 }
 
 if (modern) { // for browsers supporting history.pushState
@@ -239,8 +260,8 @@ Context.prototype.redirect = function(path){
  * @see https://github.com/visionmedia/page.js/blob/master/index.js
  */
 
-function unhandled(ctx) {
-  if (window.location.pathname + window.location.search == ctx.canonicalPath) return;
+function unhandled(context) {
+  if (window.location.pathname + window.location.search == context.canonicalPath) return;
   exports.stop();
-  window.location = ctx.canonicalPath;
+  window.location = context.canonicalPath;
 }

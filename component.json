@@ -8,7 +8,6 @@
     "tower/route": "*",
     "tower/context": "*",
     "tower/view": "*",
-    "component/path-to-regexp": "*",
     "component/emitter": "*"
   },
   "development": {
