@@ -4,6 +4,8 @@
 - https://developer.mozilla.org/en-US/docs/DOM/Manipulating_the_browser_history
 - https://github.com/component/set
 - https://github.com/visionmedia/node-methods
+- https://github.com/component/reactive/blob/master/examples/hide.html
+- https://github.com/component/reactive/blob/master/examples/form.html
 
 ## Installation
 
@@ -39,6 +41,31 @@ function unhandled(context) {
   exports.stop();
   window.location = context.canonicalPath;
 }
+```
+
+Move these into [parts](https://github.com/part):
+
+```js
+/**
+ * Go back `i` in history.
+ *
+ * @api public
+ */
+
+exports.back = function(i){
+  i ? window.history.go(-i) : history.back();
+}
+
+/**
+ * Go forward `i` in history.
+ *
+ * @api public
+ */
+
+exports.forward = function(i){
+  i ? window.history.go(i) : history.forward();
+}
+
 ```
 
 ## License

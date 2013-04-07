@@ -133,51 +133,6 @@ exports.replace = function(path, state, dispatch){
 };
 
 /**
- * Go back `i` in history.
- *
- * @api public
- */
-
-exports.back = function(i){
-  i ? window.history.go(-i) : history.back();
-}
-
-/**
- * Go forward `i` in history.
- *
- * @api public
- */
-
-exports.forward = function(i){
-  i ? window.history.go(i) : history.forward();
-}
-
-if (modern) { // for browsers supporting history.pushState
-  Context.prototype.pushState = function(){
-    history.pushState(this.state, this.title, this.canonicalPath);
-  };
-
-  Context.prototype.replaceState = function(){
-    history.replaceState(this.state, this.title, this.canonicalPath);
-  }
-  
-  onchange = function onpopstate(e){
-    if (e.state) exports.replace(e.state.path, e.state);
-  }
-} else { // for IE7/8
-  Context.prototype.replaceState = Context.prototype.pushState = function(){
-    window.location.hash = '#' + this.canonicalPath;
-    document.title = this.title;
-  }
-
-  onchange = function onhashchange(e){
-    // e.newURL.split(hash)[1];
-    exports.replace(e.oldURL.split('#')[1]);
-    return false;
-  };
-}
-
-/**
  * Additional initializer functionality.
  *
  * @api private
@@ -199,9 +154,6 @@ Context.prototype.init = function(options){
 Context.prototype.render = function(name, options){
   if ('object' == typeof name) options = name;
   options || (options = {});
-
-  // https://github.com/component/reactive/blob/master/examples/hide.html
-  // https://github.com/component/reactive/blob/master/examples/form.html
 
   view(name).appendTo('body');
 }
@@ -230,4 +182,29 @@ Context.prototype.transition = function(name){
   series(this, this.route.actions['exit'], this, function(){
     exports.dispatch(route(name));
   });
+}
+
+if (modern) { // for browsers supporting history.pushState
+  Context.prototype.pushState = function(){
+    history.pushState(this.state, this.title, this.canonicalPath);
+  };
+
+  Context.prototype.replaceState = function(){
+    history.replaceState(this.state, this.title, this.canonicalPath);
+  }
+  
+  onchange = function onpopstate(e){
+    if (e.state) exports.replace(e.state.path, e.state);
+  }
+} else { // for IE7/8
+  Context.prototype.replaceState = Context.prototype.pushState = function(){
+    window.location.hash = '#' + this.canonicalPath;
+    document.title = this.title;
+  }
+
+  onchange = function onhashchange(e){
+    // e.newURL.split(hash)[1];
+    exports.replace(e.oldURL.split('#')[1]);
+    return false;
+  };
 }
