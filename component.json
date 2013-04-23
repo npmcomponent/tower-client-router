@@ -6,8 +6,7 @@
   "keywords": [],
   "dependencies": {
     "tower/route": "*",
-    "part/async-series": "*",
-    "component/emitter": "*"
+    "part/async-series": "*"
   },
   "development": {
     "visionmedia/mocha": "*",

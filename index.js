@@ -10,7 +10,7 @@ var route = require('tower-route')
  * Expose `router`.
  */
 
-var exports = module.exports = router;
+exports = module.exports = router;
 
 /**
  * Expose `route`.
@@ -176,6 +176,8 @@ exports.replace = function(path, state, dispatch){
 
 /**
  * Instantiate a new `Context`.
+ *
+ * XXX: Maybe this becomes `tower-client-context`.
  */
 
 function Context(options) {
