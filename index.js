@@ -3,8 +3,8 @@
  * Module dependencies
  */
 
-var route = require('tower-route')
-  , series = require('part-async-series');
+var route = require('tower-route');
+var series = require('part-async-series');
 
 /**
  * Expose `router`.
@@ -84,7 +84,7 @@ exports.dispatch = function(context, fn){
   });
 
   return exports;
-}
+};
 
 /**
  * Clear routes and callbacks.
@@ -94,7 +94,7 @@ exports.clear = function(){
   callbacks.length = 0;
   route.routes.length = 0;
   return exports;
-}
+};
 
 /**
  * When a route is created, add it to the router.
@@ -209,18 +209,17 @@ function Context(options) {
 Context.prototype.render = function(name, options){
   if ('object' == typeof name) options = name;
   options || (options = {});
-
-  view(name).appendTo('body');
-}
+  // XXX
+};
 
 Context.prototype.save = function(){
   this.replaceState();
-}
+};
 
 Context.prototype.redirect = function(path){
   exports.replace(path);
   return this;
-}
+};
 
 /**
  * Transition to a new route.
@@ -237,7 +236,7 @@ Context.prototype.transition = function(name){
   series(this.route.actions['exit'], this, function(){
     exports.dispatch(route(name));
   });
-}
+};
 
 if (modern) { // for browsers supporting history.pushState
   Context.prototype.pushState = function(){
@@ -246,16 +245,16 @@ if (modern) { // for browsers supporting history.pushState
 
   Context.prototype.replaceState = function(){
     history.replaceState(this.state, this.title, this.canonicalPath);
-  }
+  };
   
   onchange = function onpopstate(e){
     if (e.state) exports.replace(e.state.path, e.state);
-  }
+  };
 } else { // for IE7/8
   Context.prototype.replaceState = Context.prototype.pushState = function(){
     window.location.hash = '#' + this.canonicalPath;
     document.title = this.title;
-  }
+  };
 
   onchange = function onhashchange(e){
     // e.newURL.split(hash)[1];

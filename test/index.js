@@ -1,6 +1,6 @@
-var router = require('tower-router')
-  , route = router.route
-  , assert = require('component-assert');
+var router = require('tower-router');
+var route = router.route;
+var assert = require('component-assert');
 
 describe('router', function(){
   beforeEach(router.clear);
