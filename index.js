@@ -198,20 +198,6 @@ function Context(options) {
   this.state = options.state || {};
 }
 
-/**
- * Render a template.
- *
- * @param {String} name
- * @param {Object} options
- * @api public
- */
-
-Context.prototype.render = function(name, options){
-  if ('object' === typeof name) options = name;
-  options || (options = {});
-  // XXX
-};
-
 Context.prototype.save = function(){
   this.replaceState();
 };
