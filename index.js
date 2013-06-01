@@ -145,8 +145,8 @@ exports.stop = function(){
 
 exports.show = function(path, state, dispatch){
   var context = new Context({
-      path: path
-    , state: state
+    path: path,
+    state: state
   });
 
   if (false !== dispatch) exports.dispatch(context);
@@ -164,8 +164,8 @@ exports.show = function(path, state, dispatch){
 
 exports.replace = function(path, state, dispatch){
   var context = new Context({
-      path: path
-    , state: state
+    path: path,
+    state: state
   });
 
   if (null == dispatch) dispatch = true;
@@ -207,7 +207,7 @@ function Context(options) {
  */
 
 Context.prototype.render = function(name, options){
-  if ('object' == typeof name) options = name;
+  if ('object' === typeof name) options = name;
   options || (options = {});
   // XXX
 };

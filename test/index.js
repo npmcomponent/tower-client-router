@@ -1,3 +1,4 @@
+
 var router = require('tower-router');
 var route = router.route;
 var assert = require('component-assert');
@@ -16,9 +17,9 @@ describe('router', function(){
       .use(function(context){
         calls.push('use');
       })
-      .on('request', function(context){
+      .action(function(context){
         calls.push('request');
-      })
+      });
 
     router.start();
     router.stop();
@@ -31,7 +32,7 @@ describe('router', function(){
     var calls = [];
 
     route('/users', 'users.index')
-      .on('request', function(context){
+      .action(function(context){
         calls.push('users.request')
 
         setTimeout(function(){
@@ -40,7 +41,7 @@ describe('router', function(){
       });
 
     route('/posts', 'posts.index')
-      .on('request', function(context){
+      .action(function(context){
         calls.push('posts.request');
 
         assert('users.request' === calls[0]);
@@ -58,14 +59,14 @@ describe('router', function(){
     var calls = [];
 
     route('/users')
-      .on('request', function(context){
+      .action(function(context){
         calls.push('users.request');
 
         context.redirect('/posts');
       });
 
     route('/posts')
-      .on('request', function(context){
+      .action(function(context){
         calls.push('posts.request');
 
         assert('users.request' === calls[0]);
