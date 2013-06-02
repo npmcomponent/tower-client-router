@@ -2,7 +2,7 @@
   "name": "tower-router",
   "repo": "tower/client-router",
   "description": "Tower Client Router component",
-  "version": "0.0.1",
+  "version": "0.5.0pre",
   "keywords": [],
   "dependencies": {
     "tower/route": "*",
