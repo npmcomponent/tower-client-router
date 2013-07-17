@@ -2,10 +2,10 @@
   "name": "tower-router",
   "repo": "tower/client-router",
   "description": "Tower Client Router component",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "keywords": [],
   "dependencies": {
-    "tower/route": "0.1.0",
+    "tower/route": "0.1.1",
     "part/async-series": "*"
   },
   "development": {
