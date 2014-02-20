@@ -3,8 +3,8 @@
  * Module dependencies
  */
 
-var route = require('tower-route');
-var series = require('part-async-series');
+// commented out by npm-component: var route = require('tower-route');
+// commented out by npm-component: var series = require('part-async-series');
 
 /**
  * Expose `router`.

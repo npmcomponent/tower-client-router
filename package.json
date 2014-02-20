@@ -1,0 +1,11 @@
+{
+  "name": "tower-client-router",
+  "description": "Tower Client Router component",
+  "version": "0.1.2",
+  "keywords": [],
+  "dependencies": {
+    "tower-route": "git://github.com/npmcomponent/tower-route.git",
+    "part-async-series": "git://github.com/npmcomponent/part-async-series.git"
+  },
+  "license": "MIT"
+}
